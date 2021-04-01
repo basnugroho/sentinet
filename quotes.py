@@ -35,7 +35,7 @@ def process():
     kata = remove_stopwords_id(kata)
     sentiment = sentimentTextBlob(kata)
     data = {
-        "text": tweet,
+        "tweet": tweet,
         "pre_process": kata,
         "sentiment": sentiment,
         }
