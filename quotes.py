@@ -1,5 +1,7 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from pre_process import *
+from calculate_sentiment import sentimentTextBlob
 
 app = Flask(__name__)
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:Havingfun123@localhost/quotes'
@@ -27,7 +29,15 @@ def quotes():
 
 @app.route('/process', methods = ['POST'])
 def process():
-    author = request.form['author']
-    quote = request.form['quote']
-    return redirect(url_for('index.html'))
+    tweet = request.json['tweet']
+    kata = clean_text(tweet)
+    kata = find_replace('indihome', kata)
+    kata = remove_stopwords_id(kata)
+    sentiment = sentimentTextBlob(kata)
+    data = {
+        "text": tweet,
+        "pre_process": kata,
+        "sentiment": sentiment,
+        }
+    return jsonify(data), 200
 
